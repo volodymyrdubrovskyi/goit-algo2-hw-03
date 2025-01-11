@@ -145,12 +145,20 @@ capacity_matrix = [
 
 sources = [0, 1]
 sinks = [6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]
+results = []
 
 max_flow = 0
 
 for source in sources:
     for sink in sinks:
         current_flow = edmonds_karp(capacity_matrix, source, sink)
+        if source == 0:
+            terminal = "Термінал 1"
+        else:
+            terminal = "Термінал 2"
+        shop = f"Магазин {sink-5}"    
+        results.append((terminal, shop, current_flow))
+        
         if current_flow == max_flow:
             max_flows.append((source,sink))
         if current_flow > max_flow:
@@ -163,3 +171,22 @@ plt.suptitle(max_flow_text, x=0.8, y=0.75)
 
 # Відображаємо граф
 plt.show()
+
+# Виводимо таблицю потоків
+header = ["Термінал", "Магазин", "Фактичний Потік (одиниць)"]
+
+# Знаходимо максимальну ширину для кожного стовпця
+widths = [max(len(str(item)) for item in col) for col in zip(header, *results)]
+
+# Формуємо форматовані рядки для таблиці
+format_str = ' | '.join(f'{{:<{w}}}' for w in widths)
+
+# Виведення заголовка
+print(format_str.format(*header))
+
+# Виведення роздільника
+print('-+-'.join('-' * w for w in widths))
+
+# Виведення даних
+for row in results:
+    print(format_str.format(*row))
